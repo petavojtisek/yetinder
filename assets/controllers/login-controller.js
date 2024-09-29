@@ -61,7 +61,7 @@ export default class extends Controller {
 
   prefillCathrynBenitez() {
     this.usernameTarget.value = 'cathryn'
-    this.passwordTarget.value = 'BenitezBenitez'
+    this.passwordTarget.value = 'benitez'
   }
 
   prefillLadonnaMorrison() {
@@ -76,7 +76,7 @@ export default class extends Controller {
 
   prefillOswaldoLowe() {
     this.usernameTarget.value = 'oswaldo'
-    this.passwordTarget.value = 'loweLowe'
+    this.passwordTarget.value = 'lowe'
   }
 
   prefillJosefRandall() {
