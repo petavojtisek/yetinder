@@ -208,6 +208,10 @@
                  <source>login.to_see_posts</source>
                  <target>Přihlašte se pro Vaše návrhy</target>
              </trans-unit>
+            <trans-unit id="menu.choose_language">
+                <source>menu.choose_language</source>
+                <target>Vyberte jazyk</target>
+            </trans-unit>
             <trans-unit id="item.content.detail">
                  <source>item.content.detail</source>
                  <target>Zobrazit popis</target>
@@ -225,6 +229,10 @@
                  <target>Statistika</target>
              </trans-unit>
 
+            <trans-unit id="post.created_successfully">
+                <source>post.created_successfully</source>
+                <target>Příspěvek byl uložen</target>
+            </trans-unit>
             <trans-unit id="post.num_comments">
                 <source>post.num_comments</source>
                 <target>{count, plural, one {# komentář} few {# komentáře} other {# komentářů}}</target>

@@ -6,16 +6,17 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Entity\Post;
 use App\Entity\User;
+use App\Facade\PostFacade;
 use App\Form\PostType;
 use App\Repository\CommentRepository;
 
 use App\Repository\TagRepository;
 use App\Utils\ImageResizeService;
-use Composer\Autoload\ClassLoader;
+
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Config\Loader\Loader;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,8 +28,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Twig\Environment;
-use Twig\Loader\LoaderInterface;
-use Twig\TwigFilter;
+
 
 
 #[Route('/')]
@@ -38,7 +38,7 @@ final class DefaultController extends AbstractController
     #[Route('/list', name: 'list', defaults: ['page' => '1', '_format' => 'html'], methods: ['GET'])]
     #[Route('/list/page/{page<[1-9]\d{0,8}>}', name: 'list_paginated', defaults: ['_format' => 'html'], methods: ['GET'])]
     #[Cache(smaxage: 10)]
-    public function index(Environment $twig, Request $request, int $page, string $_format,  \App\Facade\PostFacade $postFacade): Response
+    public function index(Environment $twig, Request $request, int $page, string $_format,  PostFacade $postFacade): Response
     {
 
         $latestPostsData = $postFacade->getPostListTemplateData($page);
