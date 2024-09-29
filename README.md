@@ -66,6 +66,16 @@ $ cd my_project/
 $ php -S localhost:8000 -t public/
 ```
 
+Data
+Execute this command to setup database and add data:
+```bash
+$ cd my_project/
+$ ./bin/console doctrine:schema:update 
+$ ./bin/console doctrine:fixtures:load 
+```
+
+
+
 Tests
 -----
 
