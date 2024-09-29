@@ -34,54 +34,54 @@ export default class extends Controller {
 
 
   prefillKatinaMccall() {
-    this.usernameTarget.value = 'Katina'
-    this.passwordTarget.value = 'MccallMccall'
+    this.usernameTarget.value = 'katina'
+    this.passwordTarget.value = 'mccall'
   }
 
   prefillPhillipBeltran() {
-    this.usernameTarget.value = 'Phillip'
-    this.passwordTarget.value = 'BeltranBeltran'
+    this.usernameTarget.value = 'phillip'
+    this.passwordTarget.value = 'beltran'
   }
 
   prefillMillieStephenson() {
-    this.usernameTarget.value = 'Millie'
-    this.passwordTarget.value = 'StephensonStephenson'
+    this.usernameTarget.value = 'millie'
+    this.passwordTarget.value = 'stephenson'
   }
 
   prefillLennyKerr() {
-    this.usernameTarget.value = 'Lenny'
-    this.passwordTarget.value = 'KerrKerrKerr'
+    this.usernameTarget.value = 'lenny'
+    this.passwordTarget.value = 'kerr'
   }
 
 
   prefillEdisonLyons() {
-    this.usernameTarget.value = 'Edison'
-    this.passwordTarget.value = 'LyonsLyons'
+    this.usernameTarget.value = 'edison'
+    this.passwordTarget.value = 'lyons'
   }
 
   prefillCathrynBenitez() {
-    this.usernameTarget.value = 'Cathryn'
+    this.usernameTarget.value = 'cathryn'
     this.passwordTarget.value = 'BenitezBenitez'
   }
 
   prefillLadonnaMorrison() {
-    this.usernameTarget.value = 'Ladonna'
-    this.passwordTarget.value = 'MorrisonMorrison'
+    this.usernameTarget.value = 'ladonna'
+    this.passwordTarget.value = 'morrison'
   }
 
   prefillJulianneMerritt() {
-    this.usernameTarget.value = 'Julianne'
-    this.passwordTarget.value = 'MerrittMerritt'
+    this.usernameTarget.value = 'julianne'
+    this.passwordTarget.value = 'merritt'
   }
 
   prefillOswaldoLowe() {
-    this.usernameTarget.value = 'Oswaldo'
-    this.passwordTarget.value = 'LoweLowe'
+    this.usernameTarget.value = 'oswaldo'
+    this.passwordTarget.value = 'loweLowe'
   }
 
   prefillJosefRandall() {
-    this.usernameTarget.value = 'Josef'
-    this.passwordTarget.value = 'RandallRandall'
+    this.usernameTarget.value = 'josef'
+    this.passwordTarget.value = 'randall'
   }
 
   togglePasswordInputType() {

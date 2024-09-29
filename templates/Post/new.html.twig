@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body_id 'admin_post_new' %}
+
+{% block main %}
+    <h1>{{ 'title.post_new'|trans }}</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.content) }}
+
+
+        {{ form_row(form.gender) }}
+        {{ form_row(form.width) }}
+        {{ form_row(form.weight) }}
+        {{ form_row(form.street) }}
+        {{ form_row(form.city) }}
+        {{ form_row(form.zip) }}
+        {{ form_row(form.country) }}
+        {{ form_row(form.imageFile) }}
+
+
+        {{ form_row(form.publishedAt) }}
+
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fa fa-save" aria-hidden="true"></i> {{ 'label.create_post'|trans }}
+        </button>
+
+        <a href="{{ path('list') }}" class="btn btn-link">
+            <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
+        </a>
+
+    <script>
+        $('.custom-file-input').on('change', function(event) {
+            let inputFile = event.currentTarget;
+            $(inputFile).parent().find('.custom-file-label').html(inputFile.files[0].name);
+        });
+    </script>
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block sidebar %}
+    {{ parent() }}
+    {{ show_source_code(_self) }}
+{% endblock %}

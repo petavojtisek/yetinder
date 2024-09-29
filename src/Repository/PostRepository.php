@@ -13,6 +13,7 @@ namespace App\Repository;
 
 use App\Entity\Post;
 use App\Entity\Tag;
+use App\Entity\User;
 use App\Facade\PostFacade;
 use App\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -89,7 +90,7 @@ class PostRepository extends ServiceEntityRepository
      * @param $user
      * @return false|mixed
      */
-    public function getSurprisePost($user, $country){
+    public function getSurprisePost(?User $user, $country){
 
         $com = $this->entityManager->getRepository('App\Entity\Comment');
         //nacteni jiz odhlasovanych postu
@@ -100,14 +101,18 @@ class PostRepository extends ServiceEntityRepository
         $sub->setParameter('userId', $user?->getId());
 
 
+        $pGender = ($user?->getGender() == 'M') ? 'F': 'M';
+
         //nacteni postu kde nejsem autor a zaroven jsem nehlasoval
         $qb = $this->createQueryBuilder('p')
                 ->addSelect('CASE WHEN (p.country = :country) THEN 1 ELSE 0 END AS HIDDEN mainSort')
+                ->addSelect('CASE WHEN (p.gender = :gender) THEN 1 ELSE 0 END AS HIDDEN genderSort')
                 ->setMaxResults(1)
                 ->where('p.author != :userId')
                 ->setParameter('country', $country)
+                ->setParameter('gender', $pGender)
                 ->setParameter('userId', $user?->getId())
-                ->orderBy('mainSort DESC,  RAND()');
+                ->orderBy('genderSort DESC , mainSort DESC, RAND()');
 
         $qb->andWhere($qb->expr()->not($qb->expr()->exists($sub->getDQL())));
         $res = $qb->getQuery()->getResult();

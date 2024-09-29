@@ -74,7 +74,9 @@ final class AppFixtures extends Fixture
             $post->setCity($city);
             $post->setzip($zip);
             $post->setCountry($country);
-            $post->setImage($this->getRandomImage($gender));
+
+            $image =  $gender.rand(1,5).'.jpg';
+            $post->setImage($image);
 
 
             foreach (range(1, 5) as $i) {
@@ -101,20 +103,19 @@ final class AppFixtures extends Fixture
     private function getUserData(): array
     {
         return [
-            // $userData = [$fullname, $username, $password, $email, $roles];
+            // $userData = [$fullname, $username, $password, $email, $roles, $gender];
             ['John Doe', 'john_user', 'kitten', 'john_user@symfony.com', [User::ROLE_USER],'M'],
             ['Petr V', 'petr', 'petrpetr', 'petr@symfony.com', [User::ROLE_USER],'M'],
-
-            ['Katina Mccall', 'Katina', 'MccallMccall', 'Katina@symfony.com', [User::ROLE_USER],'F'],
-            ['Phillip Beltran', 'Phillip', 'BeltranBeltran', 'Phillip@symfony.com', [User::ROLE_USER],'M'],
-            ['Millie Stephenson', 'Millie', 'StephensonStephenson', 'Millie@symfony.com', [User::ROLE_USER], 'F'],
-            ['Lenny Kerr', 'Lenny', 'KerrKerrKerr', 'Lenny@symfony.com', [User::ROLE_USER], 'M'],
-            ['Edison Lyons', 'Edison', 'LyonsLyons', 'Edison@symfony.com', [User::ROLE_USER], 'F'],
-            ['Cathryn Benitez', 'Cathryn', 'BenitezBenitez', 'Cathryn@symfony.com', [User::ROLE_USER],'F'],
-            ['Ladonna Morrison', 'Ladonna', 'MorrisonMorrison', 'Ladonna@symfony.com', [User::ROLE_USER], 'F'],
-            ['Julianne Merritt', 'Julianne', 'MerrittMerritt', 'Julianne@symfony.com', [User::ROLE_USER],'J'],
-            ['Oswaldo Lowe', 'Oswaldo', 'LoweLowe', 'Oswaldo@symfony.com', [User::ROLE_USER],'M'],
-            ['Josef Randall', 'Josef', 'RandallRandall', 'Josef@symfony.com', [User::ROLE_USER],'M'],
+            ['Katina Mccall', 'katina', 'mccall', 'Katina@symfony.com', [User::ROLE_USER],'F'],
+            ['Phillip Beltran', 'phillip', 'beltran', 'Phillip@symfony.com', [User::ROLE_USER],'M'],
+            ['Millie Stephenson', 'millie', 'stephenson', 'Millie@symfony.com', [User::ROLE_USER], 'F'],
+            ['Lenny Kerr', 'lenny', 'kerr', 'Lenny@symfony.com', [User::ROLE_USER], 'M'],
+            ['Edison Lyons', 'edison', 'lyons', 'Edison@symfony.com', [User::ROLE_USER], 'F'],
+            ['Cathryn Benitez', 'cathryn', 'benitez', 'Cathryn@symfony.com', [User::ROLE_USER],'F'],
+            ['Ladonna Morrison', 'ladonna', 'morrison', 'Ladonna@symfony.com', [User::ROLE_USER], 'F'],
+            ['Julianne Merritt', 'julianne', 'merritt', 'Julianne@symfony.com', [User::ROLE_USER],'J'],
+            ['Oswaldo Lowe', 'oswaldo', 'lowe', 'Oswaldo@symfony.com', [User::ROLE_USER],'M'],
+            ['Josef Randall', 'josef', 'randall', 'Josef@symfony.com', [User::ROLE_USER],'M'],
         ];
     }
 
@@ -136,8 +137,8 @@ final class AppFixtures extends Fixture
             $user = $this->getReference($users[$userSearchKey][1]);
             $gender = $nameData['gender'];
             $title = $this->getTitle($gender);
-            $crand = random_int(0,3);
-            $country = ['CZ','SK','DE','PL'];
+
+            $country =  ($i<2)? 'PL' : 'CZ';
 
 
             $posts[] = [
@@ -154,7 +155,7 @@ final class AppFixtures extends Fixture
                 $this->getRandomStreet(),
                 $this->getRandomCity(),
                 $this->getRandomZip(),
-                $country[$crand],
+                $country
             ];
         }
 
@@ -194,7 +195,7 @@ final class AppFixtures extends Fixture
         $title['F'][]="Tajemná Sněhule";
 
         $key = random_int(0, (count($title[$gender])-1));
-        return $titlentent['gender'][$key];
+        return $title[$gender][$key];
 
     }
 
@@ -349,7 +350,7 @@ final class AppFixtures extends Fixture
         $content['F'][]="Záhadná sněhule, co se zjevuje v noci.";
 
         $key = random_int(0, (count($content[$gender])-1));
-        return $content['gender'][$key];
+        return $content[$gender][$key];
 
     }
 

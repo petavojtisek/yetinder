@@ -12,34 +12,24 @@ Requirements
 Installation
 ------------
 
-There are 3 different ways of installing this project depending on your needs:
-
-**Option 1.** [Download Symfony CLI][4] and use the `symfony` binary installed
-on your computer to run this command:
+Download from repository and run
 
 ```bash
-$ symfony new --demo my_project
-```
-
-**Option 2.** [Download Composer][6] and use the `composer` binary installed
-on your computer to run these commands:
-
-```bash
-# you can create a new project based on the Symfony Demo project...
-$ composer create-project symfony/symfony-demo my_project
-
 # ...or you can clone the code repository and install its dependencies
-$ git clone https://github.com/symfony/demo.git my_project
+$ git clone https://github.com/petavojtisek/yetinder.git my_project
 $ cd my_project/
 $ composer install
+$ npm install
+$ npm run build
+
+$ ./bin/console cache:pool:clear --all
+
+create dtb wjs
+
+$ ./bin/console doctrine:schema:update 
+$ ./bin/console doctrine:fixtures:load 
 ```
-
-**Option 3.** Click the following button to deploy this project on Platform.sh,
-the official Symfony PaaS, so you can try it without installing anything locally:
-
-<p align="center">
-<a href="https://console.platform.sh/projects/create-project?template=https://raw.githubusercontent.com/symfonycorp/platformsh-symfony-template-metadata/main/symfony-demo.template.yaml&utm_content=symfonycorp&utm_source=github&utm_medium=button&utm_campaign=deploy_on_platform"><img src="https://platform.sh/images/deploy/lg-blue.svg" alt="Deploy on Platform.sh" width="180px" /></a>
-</p>
+ 
 
 Usage
 -----
@@ -66,29 +56,13 @@ $ cd my_project/
 $ php -S localhost:8000 -t public/
 ```
 
-Data
-Execute this command to setup database and add data:
-```bash
-$ cd my_project/
-$ ./bin/console doctrine:schema:update 
-$ ./bin/console doctrine:fixtures:load 
-```
 
 
-
-Tests
------
-
-Execute this command to run tests:
-
-```bash
-$ cd my_project/
-$ ./bin/phpunit
-```
-
-[1]: https://symfony.com/doc/current/best_practices.html
-[2]: https://symfony.com/doc/current/setup.html#technical-requirements
-[3]: https://symfony.com/doc/current/setup/web_server_configuration.html
-[4]: https://symfony.com/download
-[5]: https://symfony.com/book
-[6]: https://getcomposer.org/
+Description
+------------
+Hlavní stránka
+- Seznam top příspěvků - automaticky refresh 5sec
+- Yetinder navrhované příspěvky s řazením 
+	dle pohlaví - přednost opačného pohlaví uživatele
+	dle preferovane country zjitěne pres 'HTTP_ACCEPT_LANGUAGE' / z localizace webu
+	
