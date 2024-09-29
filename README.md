@@ -61,8 +61,17 @@ $ php -S localhost:8000 -t public/
 Description
 ------------
 Hlavní stránka
-- Seznam top příspěvků - automaticky refresh 5sec
-- Yetinder navrhované příspěvky s řazením 
+- Seznam top příspěvků - automatický refresh 5sec 
+- Yetinder navrhované příspěvky  upravena priorita řazení
 	dle pohlaví - přednost opačného pohlaví uživatele
 	dle preferovane country zjitěne pres 'HTTP_ACCEPT_LANGUAGE' / z localizace webu
+	
+- seznam
+		- výpis příspěvků dle publikace nejnovější -> nejstarší
+		- přidání nového yetiho
+		
+- statistika    - lze upravit StatsController (todo udelat form na ovladani) 
+				- parametry jsou $dateFrom , $dateTo , vypis top x mist def(3)  a 
+				 format dle groups  '%Y-%m-%d' pro skupiny po dnech	nebo '%Y-%m' mesicni '%Y' rocni stat
+	
 	
