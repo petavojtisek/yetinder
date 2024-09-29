@@ -33,19 +33,19 @@ final class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $this->loadUsers($manager);
-        $this->loadTags($manager);
         $this->loadPosts($manager);
     }
 
     private function loadUsers(ObjectManager $manager): void
     {
-        foreach ($this->getUserData() as [$fullname, $username, $password, $email, $roles]) {
+        foreach ($this->getUserData() as [$fullname, $username, $password, $email, $roles,$gender]) {
             $user = new User();
             $user->setFullName($fullname);
             $user->setUsername($username);
             $user->setPassword($this->passwordHasher->hashPassword($user, $password));
             $user->setEmail($email);
             $user->setRoles($roles);
+            $user->setGender($gender);
 
             $manager->persist($user);
             $this->addReference($username, $user);
@@ -54,40 +54,39 @@ final class AppFixtures extends Fixture
         $manager->flush();
     }
 
-    private function loadTags(ObjectManager $manager): void
-    {
-        foreach ($this->getTagData() as $name) {
-            $tag = new Tag($name);
 
-            $manager->persist($tag);
-            $this->addReference('tag-'.$name, $tag);
-        }
-
-        $manager->flush();
-    }
 
     private function loadPosts(ObjectManager $manager): void
     {
-        foreach ($this->getPostData() as [$title, $slug, $summary, $content, $publishedAt, $author, $tags]) {
+        foreach ($this->getPostData() as [$title, $slug,  $content, $publishedAt, $author,  $name, $gender, $width, $weight, $street, $city, $zip, $country]) {
+
             $post = new Post();
             $post->setTitle($title);
             $post->setSlug($slug);
-            $post->setSummary($summary);
             $post->setContent($content);
             $post->setPublishedAt($publishedAt);
             $post->setAuthor($author);
-            $post->addTag(...$tags);
+            $post->setName($name);
+            $post->setGender($gender);
+            $post->setWidth($width);
+            $post->setWeight($weight);
+            $post->setStreet($street);
+            $post->setCity($city);
+            $post->setzip($zip);
+            $post->setCountry($country);
+            $post->setImage($this->getRandomImage($gender));
+
 
             foreach (range(1, 5) as $i) {
                 /** @var User $commentAuthor */
                 $commentAuthor = $this->getReference('john_user');
-
+                $points = random_int(1,5);
                 $comment = new Comment();
                 $comment->setAuthor($commentAuthor);
-                $comment->setContent($this->getRandomText(random_int(255, 512)));
+                $comment->setPoints($points);
                 $comment->setPublishedAt(new \DateTime('now + '.$i.'seconds'));
-
                 $post->addComment($comment);
+                $post->increasePoints($points);
             }
 
             $manager->persist($post);
@@ -103,27 +102,19 @@ final class AppFixtures extends Fixture
     {
         return [
             // $userData = [$fullname, $username, $password, $email, $roles];
-            ['Jane Doe', 'jane_admin', 'kitten', 'jane_admin@symfony.com', [User::ROLE_ADMIN]],
-            ['Tom Doe', 'tom_admin', 'kitten', 'tom_admin@symfony.com', [User::ROLE_ADMIN]],
-            ['John Doe', 'john_user', 'kitten', 'john_user@symfony.com', [User::ROLE_USER]],
-        ];
-    }
+            ['John Doe', 'john_user', 'kitten', 'john_user@symfony.com', [User::ROLE_USER],'M'],
+            ['Petr V', 'petr', 'petrpetr', 'petr@symfony.com', [User::ROLE_USER],'M'],
 
-    /**
-     * @return string[]
-     */
-    private function getTagData(): array
-    {
-        return [
-            'lorem',
-            'ipsum',
-            'consectetur',
-            'adipiscing',
-            'incididunt',
-            'labore',
-            'voluptate',
-            'dolore',
-            'pariatur',
+            ['Katina Mccall', 'Katina', 'MccallMccall', 'Katina@symfony.com', [User::ROLE_USER],'F'],
+            ['Phillip Beltran', 'Phillip', 'BeltranBeltran', 'Phillip@symfony.com', [User::ROLE_USER],'M'],
+            ['Millie Stephenson', 'Millie', 'StephensonStephenson', 'Millie@symfony.com', [User::ROLE_USER], 'F'],
+            ['Lenny Kerr', 'Lenny', 'KerrKerrKerr', 'Lenny@symfony.com', [User::ROLE_USER], 'M'],
+            ['Edison Lyons', 'Edison', 'LyonsLyons', 'Edison@symfony.com', [User::ROLE_USER], 'F'],
+            ['Cathryn Benitez', 'Cathryn', 'BenitezBenitez', 'Cathryn@symfony.com', [User::ROLE_USER],'F'],
+            ['Ladonna Morrison', 'Ladonna', 'MorrisonMorrison', 'Ladonna@symfony.com', [User::ROLE_USER], 'F'],
+            ['Julianne Merritt', 'Julianne', 'MerrittMerritt', 'Julianne@symfony.com', [User::ROLE_USER],'J'],
+            ['Oswaldo Lowe', 'Oswaldo', 'LoweLowe', 'Oswaldo@symfony.com', [User::ROLE_USER],'M'],
+            ['Josef Randall', 'Josef', 'RandallRandall', 'Josef@symfony.com', [User::ROLE_USER],'M'],
         ];
     }
 
@@ -135,135 +126,232 @@ final class AppFixtures extends Fixture
     private function getPostData(): array
     {
         $posts = [];
-        foreach ($this->getPhrases() as $i => $title) {
-            // $postData = [$title, $slug, $summary, $content, $publishedAt, $author, $tags, $comments];
+        $users = $this->getUserData();
+        foreach ($this->getNames() as $i => $nameData) {
+            // $postData = [$title, $slug,  $content, $publishedAt, $author,  $name, $gender, $width, $weight, $street, $city, $zip, $country];
 
             /** @var User $user */
-            $user = $this->getReference(['jane_admin', 'tom_admin'][0 === $i ? 0 : random_int(0, 1)]);
+           // ['john_user', 'petr'][0 === $i ? 0 : random_int(0, 1)]
+            $userSearchKey = random_int(1, (count($users)-1));
+            $user = $this->getReference($users[$userSearchKey][1]);
+            $gender = $nameData['gender'];
+            $title = $this->getTitle($gender);
+            $crand = random_int(0,3);
+            $country = ['CZ','SK','DE','PL'];
+
 
             $posts[] = [
                 $title,
-                $this->slugger->slug($title)->lower(),
-                $this->getRandomText(),
-                $this->getPostContent(),
+                $this->slugger->slug($nameData['name'])->lower(),
+                $this->getPostContent($gender),
                 (new \DateTime('now - '.$i.'days'))->setTime(random_int(8, 17), random_int(7, 49), random_int(0, 59)),
                 // Ensure that the first post is written by Jane Doe to simplify tests
                 $user,
-                $this->getRandomTags(),
+                $nameData['name'],
+                $gender,
+                (random_int(220, 420)),
+                (random_int(220, 820)),
+                $this->getRandomStreet(),
+                $this->getRandomCity(),
+                $this->getRandomZip(),
+                $country[$crand],
             ];
         }
 
         return $posts;
     }
 
-    /**
-     * @return string[]
-     */
-    private function getPhrases(): array
-    {
+
+    private function getNames(){
         return [
-            'Lorem ipsum dolor sit amet consectetur adipiscing elit',
-            'Pellentesque vitae velit ex',
-            'Mauris dapibus risus quis suscipit vulputate',
-            'Eros diam egestas libero eu vulputate risus',
-            'In hac habitasse platea dictumst',
-            'Morbi tempus commodo mattis',
-            'Ut suscipit posuere justo at vulputate',
-            'Ut eleifend mauris et risus ultrices egestas',
-            'Aliquam sodales odio id eleifend tristique',
-            'Urna nisl sollicitudin id varius orci quam id turpis',
-            'Nulla porta lobortis ligula vel egestas',
-            'Curabitur aliquam euismod dolor non ornare',
-            'Sed varius a risus eget aliquam',
-            'Nunc viverra elit ac laoreet suscipit',
-            'Pellentesque et sapien pulvinar consectetur',
-            'Ubi est barbatus nix',
-            'Abnobas sunt hilotaes de placidus vita',
-            'Ubi est audax amicitia',
-            'Eposs sunt solems de superbus fortis',
-            'Vae humani generis',
-            'Diatrias tolerare tanquam noster caesium',
-            'Teres talis saepe tractare de camerarius flavum sensorem',
-            'Silva de secundus galatae demitto quadra',
-            'Sunt accentores vitare salvus flavum parses',
-            'Potus sensim ad ferox abnoba',
-            'Sunt seculaes transferre talis camerarius fluctuies',
-            'Era brevis ratione est',
-            'Sunt torquises imitari velox mirabilis medicinaes',
-            'Mineralis persuadere omnes finises desiderium',
-            'Bassus fatalis classiss virtualiter transferre de flavum',
+                ['name'=>"Yarik", "gender"=>"M"],
+                ['name'=>"Kaltok", "gender"=>"M"],
+                ['name'=>"Thagor", "gender"=>"M"],
+                ['name'=>"Borvok", "gender"=>"M"],
+                ['name'=>"Gorvoth", "gender"=>"M"],
+
+            ['name'=>"Luminia", "gender"=>"F"],
+            ['name'=>"Avalyn", "gender"=>"F"],
+            ['name'=>"Nevira", "gender"=>"F"],
+            ['name'=>"Kalindi", "gender"=>"F"],
+            ['name'=>"Vedrana", "gender"=>"F"],
+
         ];
     }
 
-    private function getRandomText(int $maxLength = 255): string
-    {
-        $phrases = $this->getPhrases();
-        shuffle($phrases);
+    private function getTitle($gender){
+        $title['M'][]="Král Yeti";
+        $title['M'][]="Lovec Yeti";
+        $title['M'][]="Sněžný Hrdina";
+        $title['M'][]="Ledový Vládce";
+        $title['M'][]="Jakub z Himalájí";
 
-        do {
-            $text = u('. ')->join($phrases)->append('.');
-            array_pop($phrases);
-        } while ($text->length() > $maxLength);
 
-        return $text;
+        $title['F'][]="Sněžná Princezna";
+        $title['F'][]="Ledová Drakona";
+        $title['F'][]="Údolní Mágyně";
+        $title['F'][]="Horská Rusalka";
+        $title['F'][]="Tajemná Sněhule";
+
+        $key = random_int(0, (count($title[$gender])-1));
+        return $titlentent['gender'][$key];
+
     }
 
-    private function getPostContent(): string
-    {
-        return <<<'MARKDOWN'
-            Lorem ipsum dolor sit amet consectetur adipisicing elit, sed do eiusmod tempor
-            incididunt ut labore et **dolore magna aliqua**: Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-            deserunt mollit anim id est laborum.
+    private function getRandomStreet(){
+        $street = [
+            "Dělnická 194/2",
+            "Roztoky u Jilemnice 395",
+            "Holubice 381",
+            "Zámecká 49",
+            "Lesní 1290",
+            "Pod pekárnami 19/104",
+            "Štúrova 1701/55",
+            "Porhajmova 13",
+            "werichova 2007/2",
+            "Nedašov 411",
+            "Podoli 300",
+            "Družstevní 76",
+            "Zdislavice 107",
+            "Čtvercova 866",
+            "Krňany 73",
+            "Děčínská 310",
+            "Tichá 413",
+            "Blachutova 930/2",
+            "Kotrčova 615",
+            "Jiráskova 283",
+            "Nad Špejcharem 130",
+            "Zimákova 832/12",
+            "Lesní 736",
+            "Černovice 76",
+            "kaznějovská 54",
+            "Kpt.Jaroše 641/5",
+            "Skupova 6",
+            "Střední 9",
+            "Petrovice 31",
+            "Masarykova 406",
+            "sazavska, 1",
+            "zahradni, 5186",
+            "Plzeňská 233",
+            "S. K. Neumanna 989",
+            "Ponětovická 8",
+            "Jevišovická 228/14",
+            "Jevišovická 228/14",
+            "Jevišovická 228/14",
+            "Zeyerova 12",
+            "Na Louži 3",
+        ];
 
-              * Ut enim ad minim veniam
-              * Quis nostrud exercitation *ullamco laboris*
-              * Nisi ut aliquip ex ea commodo consequat
+        $key = random_int(0, 38);
+        return $street[$key];
+    }
+    private function getRandomCity(){
+        $city = [
+                   "Praha",
+                   "Roztoky u Jilemnice",
+                   "Holubice",
+                   "Rosice u Brna",
+                   "Frýdlant",
+                   "Brno",
+                   "Nedašov",
+                   "Podoli",
+                   "Chuchelná",
+                   "Zdounky",
+                   "Neratovice",
+                   "Netvořice",
+                   "Žandov",
+                   "Tichá",
+                   "Praha 9",
+                   "Hradec Králové",
+                   "Zlín",
+                   "Radim",
+                   "Praha",
+                   "Náměšť nad Oslavou",
+                   "Černovice",
+                   "Plzeň",
+                   "Třebíč",
+                   "Plzen",
+                   "Brno",
+                   "Týniště nad Orlicí",
+                   "Korycany",
+                   "praha",
+                   "Chomutov",
+                   "Jesenice okr. Rakovník",
+                   "Doksy",
+                   "Brno",
+                   "Znojmo",
+                   "Olomouc",
+                   "Ústí nad Labem",
+        ];
 
-            Praesent id fermentum lorem. Ut est lorem, fringilla at accumsan nec, euismod at
-            nunc. Aenean mattis sollicitudin mattis. Nullam pulvinar vestibulum bibendum.
-            Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos
-            himenaeos. Fusce nulla purus, gravida ac interdum ut, blandit eget ex. Duis a
-            luctus dolor.
+        $key = random_int(0, 32);
+        return $city[$key];
 
-            Integer auctor massa maximus nulla scelerisque accumsan. *Aliquam ac malesuada*
-            ex. Pellentesque tortor magna, vulputate eu vulputate ut, venenatis ac lectus.
-            Praesent ut lacinia sem. Mauris a lectus eget felis mollis feugiat. Quisque
-            efficitur, mi ut semper pulvinar, urna urna blandit massa, eget tincidunt augue
-            nulla vitae est.
+    }
+    private function getRandomZip(){
+        $zip= [
+            17000,
+            51231,
+            68351,
+            66501,
+            46401,
+            19000,
+            14000,
+            61800,
+            41201,
+            76332,
+            66403,
+            74724,
+            76802,
+            27711,
+            25744,
+            47107,
+            74274,
+            19600,
+            50703,
+            76001,
+            28103,
+            14900,
+            67571,
+            67975,
+            32300,
+            67401,
+            30100,
+            60200,
+            51721,
+            76805,
+            12000,
+            43004,
+            27033,
+            47201
+            ];
 
-            Ut posuere aliquet tincidunt. Aliquam erat volutpat. **Class aptent taciti**
-            sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Morbi
-            arcu orci, gravida eget aliquam eu, suscipit et ante. Morbi vulputate metus vel
-            ipsum finibus, ut dapibus massa feugiat. Vestibulum vel lobortis libero. Sed
-            tincidunt tellus et viverra scelerisque. Pellentesque tincidunt cursus felis.
-            Sed in egestas erat.
-
-            Aliquam pulvinar interdum massa, vel ullamcorper ante consectetur eu. Vestibulum
-            lacinia ac enim vel placerat. Integer pulvinar magna nec dui malesuada, nec
-            congue nisl dictum. Donec mollis nisl tortor, at congue erat consequat a. Nam
-            tempus elit porta, blandit elit vel, viverra lorem. Sed sit amet tellus
-            tincidunt, faucibus nisl in, aliquet libero.
-            MARKDOWN;
+        $key = random_int(0, 31);
+        return $zip[$key];
     }
 
-    /**
-     * @throws \Exception
-     *
-     * @return array<Tag>
-     */
-    private function getRandomTags(): array
+
+
+    private function getPostContent($gender): string
     {
-        $tagNames = $this->getTagData();
-        shuffle($tagNames);
-        $selectedTags = \array_slice($tagNames, 0, random_int(2, 4));
 
-        return array_map(function ($tagName) {
-            /** @var Tag $tag */
-            $tag = $this->getReference('tag-'.$tagName);
+        $content['M'][]="Silný ochránce hor s mocným duchem";
+        $content['M'][]="Tajemný tvor, co se skrývá ve stínu.";
+        $content['M'][]="Nebojácný hrdina, co brání své území.";
+        $content['M'][]="Chladný a mazaný, vždy ve střehu.";
+        $content['M'][]="Zvídavý yeti, který rád objevuje.";
 
-            return $tag;
-        }, $selectedTags);
+
+        $content['F'][]="Královna sněhu s elegancí a grácií.";
+        $content['F'][]="Silná bojovnice, co chrání svá tajemství.";
+        $content['F'][]="Moudrá mágyně, co rozumí přírodě.";
+        $content['F'][]="Fascinující rusalka, co okouzlí každého.";
+        $content['F'][]="Záhadná sněhule, co se zjevuje v noci.";
+
+        $key = random_int(0, (count($content[$gender])-1));
+        return $content['gender'][$key];
+
     }
+
+
 }

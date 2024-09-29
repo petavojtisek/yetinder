@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'homepage-new' %}
+    {% block main %}
+        <h1>{{ 'title.stats_list'|trans }}</h1>
+
+        {% if stats %}
+            <div class="container">
+             {% for key, value in stats %}
+
+                 {% include 'stats/_chart.html.twig' with  {'key':key,  'index':loop.index0, 'chartData':value, 'topPositions':topPositions} %}
+            {% endfor %}
+            </div>
+        {% endif %}
+
+{% endblock %}
+
+{% block sidebar %}
+
+    {{ parent() }}
+    {{ show_source_code(_self) }}
+{% endblock %}
+
+{% block footer %}{% endblock %}

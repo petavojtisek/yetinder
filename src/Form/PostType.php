@@ -14,13 +14,19 @@ namespace App\Form;
 use App\Entity\Post;
 use App\Form\Type\DateTimePickerType;
 use App\Form\Type\TagsInputType;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CountryType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Validator\Constraints\Image;
 
 /**
  * Defines the form used to create and manipulate blog posts.
@@ -50,34 +56,74 @@ final class PostType extends AbstractType
 
         $builder
             ->add('title', null, [
-                'attr' => ['autofocus' => true],
                 'label' => 'label.title',
             ])
-            ->add('summary', TextareaType::class, [
-                'help' => 'help.post_summary',
-                'label' => 'label.summary',
-            ])
             ->add('content', null, [
-                'attr' => ['rows' => 20],
+                'attr' => ['rows' => 10],
                 'help' => 'help.post_content',
                 'label' => 'label.content',
             ])
+            ->add('gender',ChoiceType::class,
+            [
+                'label' => 'label.gender',
+                'required' => true,
+                'choices'=>["label.gender.choice"=>null,'M'=>'M',"F"=>"F"]
+
+            ]
+            )
+            ->add('width', NumberType::class, [
+                'label' => 'label.width',
+                'attr'     => array(
+                    'min'  => 200,
+                    'max'  => 1000,
+                    'step' => 10,
+                ),
+            ])
+            ->add('weight',NumberType::class, ['label' => 'label.weight'])
+            ->add('street',null, [
+                'required' => false
+            ])
+            ->add('city',null, [
+                'label' => 'label.city',
+                'required' => false
+            ])
+            ->add('name',null, [
+                'label' => 'label.name',
+                'attr' => ['autofocus' => true],
+                'required' => true
+            ])
+            ->add('zip', null, [
+                'label' => 'label.zip',
+                'required' => false
+            ])
+            ->add('country', CountryType::class,
+            [
+                'label' => 'label.country',
+            ]
+            )
             ->add('publishedAt', DateTimePickerType::class, [
                 'label' => 'label.published_at',
                 'help' => 'help.post_publication',
             ])
-            ->add('tags', TagsInputType::class, [
-                'label' => 'label.tags',
-                'required' => false,
+            ->add('imageFile', FileType::class, [
+                'label' => 'label.image',
+                "mapped"=>false,
+                'attr' => [
+                    'accept' => "image/*"
+                ],
+                'constraints' => [
+                    new Image()
+                ]
             ])
+
             // form events let you modify information or fields at different steps
             // of the form handling process.
             // See https://symfony.com/doc/current/form/events.html
             ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
                 /** @var Post $post */
                 $post = $event->getData();
-                if (null === $post->getSlug() && null !== $post->getTitle()) {
-                    $post->setSlug($this->slugger->slug($post->getTitle())->lower());
+                if (null === $post->getSlug() && null !== $post->getName()) {
+                    $post->setSlug($this->slugger->slug($post->getName())->lower());
                 }
             })
         ;
@@ -87,6 +133,10 @@ final class PostType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Post::class,
+            'csrf_protection' => true,
+            'csrf_field_name' => 'token',
+            'csrf_token_id'   => 'add-new-post'
+
         ]);
     }
 }

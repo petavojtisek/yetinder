@@ -10,6 +10,10 @@
                 <source>post.too_short_content</source>
                 <target>Příspěvek je příliš krátký (musí mít minimálně { limit } znak)|Příspěvek je příliš krátký (musí mít minimálně { limit } znaky)|Příspěvek je příliš krátký (musí mít minimálně { limit } znaků)</target>
             </trans-unit>
+            <trans-unit id="post.too_long_content">
+                   <source>post.too_long_content</source>
+                   <target>Příspěvek je příliš dlouhý (musí mít maximálně { limit } znak)|Příspěvek je příliš dlouhý (musí mít maximálně { limit } znaky)|Příspěvek je příliš dlouhý (musí mít maximálně { limit } znaků)</target>
+            </trans-unit>
             <trans-unit id="comment.blank">
                 <source>comment.blank</source>
                 <target>Prosím, napište text komentáře!</target>

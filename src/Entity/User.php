@@ -29,7 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: 'symfony_demo_user')]
+#[ORM\Table(name: 'wjs_user')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     // We can use constants for roles to find usages all over the application rather
@@ -64,6 +64,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(type: Types::JSON)]
     private array $roles = [];
+
+
+    #[ORM\Column(type: Types::STRING)]
+    private ?string $gender = null;
 
     public function getId(): ?int
     {
@@ -136,6 +140,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRoles(array $roles): void
     {
         $this->roles = $roles;
+    }
+
+
+    public function setGender($gender){
+        $this->gender = $gender;
+
+    }
+
+    public function getGender(){
+        return $this->gender;
     }
 
     /**

@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'homepage' %}
+
+{#
+the homepage is a special page which displays neither a header nor a footer.
+this is done with the 'trick' of defining empty Twig blocks without any content
+#}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+    {{ include('default/_flash_messages.html.twig') }}
+
+    <div class="page-header">
+        <h1>{{ 'title.homepage'|trans|raw }}</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <a class="btn btn-success" style="width: 100%" href="{{path('list') }} ">
+                <i class="fa fa-sign-out" aria-hidden="true"></i> {{ 'post.list.btn'|trans }}
+            </a>
+        </div>
+    </div>
+    <div class="row pt-5">
+        <div class="col-sm-6">
+            <div class="jumbotron">
+                <h1>{{ 'title.post_list.top'|trans }}</h1>
+                <table class="table table-striped table-middle-aligned table-borderless">
+                    <thead>
+                    <tr>
+                        <th scope="col">{{ 'label.name'|trans }}</th>
+                        <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i> {{ 'label.published_at'|trans }}</th>
+                        <th scope="col" class="text-center"><i class="fa fa-star" aria-hidden="true"></i> </th>
+                    </tr>
+                    </thead>
+                    <tbody id="post-list-top">
+                        {% include 'post/_post_list.html.twig' with  {'type':'hp'} %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div class="col-sm-6">
+            <div class="jumbotron">
+                <div id="surprise">
+                    {% if surprise and is_granted('IS_AUTHENTICATED_FULLY') %}
+                        {% include 'post/_post_item.html.twig' with  {'type':'card', 'post':surprise} %}
+                    {% else %}
+                        {% if  is_granted('IS_AUTHENTICATED_FULLY') %}
+                            {{ 'nomore.posts'|trans }}
+                        {% else %}
+                            <a class="btn btn-success" href="{{ path('security_login', {'redirect_to': app.request.pathInfo}) }}">{{ 'login.to_see_posts'|trans }}</a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript">
+        function load() {
+            setTimeout(function () {
+                $.ajax({
+                    url: "{{ path('homepage_ajax') }}",
+                    type: "GET",
+                    dataType: 'json',
+                    success: function (result) {
+                        $("#post-list-top").empty();
+                        $("#post-list-top").html(result);
+                    },
+                    complete: load
+                });
+            }, 5000);
+        }
+         load();
+    </script>
+
+{% endblock %}
+
+

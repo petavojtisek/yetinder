@@ -32,8 +32,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  */
 #[ORM\Entity(repositoryClass: PostRepository::class)]
-#[ORM\Table(name: 'symfony_demo_post')]
-#[UniqueEntity(fields: ['slug'], errorPath: 'title', message: 'post.slug_unique')]
+#[ORM\Table(name: 'wjs_post')]
+#[UniqueEntity(fields: ['slug'], errorPath: 'name', message: 'post.slug_unique')]
+#[ORM\Index(columns: ['gender'], name: 'gender')]
+#[ORM\Index(columns: ['zip'], name: 'zip')]
+#[ORM\Index(columns: ['slug'], name: 'slug')]
+#[ORM\Index(columns: ['published_at'], name: 'published_at')]
+#[ORM\Index(columns: ['city'], name: 'city')]
+#[ORM\Index(columns: ['width'], name: 'width')]
+#[ORM\Index(columns: ['weight'], name: 'weight')]
+#[ORM\Index(columns: ['country'], name: 'country')]
+#[ORM\Index(columns: ['points'], name: 'points')]
+
 class Post
 {
     #[ORM\Id]
@@ -45,17 +55,60 @@ class Post
     #[Assert\NotBlank]
     private ?string $title = null;
 
-    #[ORM\Column(type: Types::STRING)]
-    private ?string $slug = null;
 
-    #[ORM\Column(type: Types::STRING)]
-    #[Assert\NotBlank(message: 'post.blank_summary')]
-    #[Assert\Length(max: 255)]
-    private ?string $summary = null;
+
+        #[ORM\Column(type: Types::STRING)]
+        #[Assert\NotBlank]
+        private ?string $name = null;
+
+
+        #[ORM\Column(type: Types::STRING)]
+        #[Assert\Length(max: 10)]
+        #[Assert\NotBlank]
+        private ?string $gender = null;
+
+
+        #[ORM\Column(type: Types::FLOAT)]
+        private ?float $width = null;
+
+
+        #[ORM\Column(type: Types::INTEGER)]
+        private ?int $weight = null;
+
+        #[ORM\Column(type: Types::STRING, length:255, nullable:true)]
+        #[Assert\Length(max: 255)]
+        private $image = null;
+
+
+        #[ORM\Column(type: Types::STRING, nullable:true)]
+        #[Assert\Length(max: 255)]
+        private ?string $street = null;
+
+
+        #[ORM\Column(type: Types::STRING, nullable:true)]
+        #[Assert\Length(max: 255)]
+        private ?string  $city = null;
+
+
+        #[ORM\Column(type: Types::STRING, nullable:true)]
+        #[Assert\Length(max: 20)]
+        private ?string $zip  = null;
+
+
+        #[ORM\Column(type: Types::STRING, nullable:true)]
+        #[Assert\Length(max: 100)]
+        #[Assert\NotBlank(message: 'post.blank_country')]
+        private ?string $country = null;
+
+
+        #[ORM\Column(type: Types::STRING)]
+        private ?string $slug = null;
+
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: 'post.blank_content')]
-    #[Assert\Length(min: 10, minMessage: 'post.too_short_content')]
+    #[Assert\Length(min: 10,  minMessage: 'post.too_short_content')]
+    #[Assert\Length(max: 255, minMessage: 'post.too_long_content')]
     private ?string $content = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -65,6 +118,9 @@ class Post
     #[ORM\JoinColumn(nullable: false)]
     private ?User $author = null;
 
+    #[ORM\Column(type: Types::INTEGER, nullable:true)]
+    private ?int $points = null;
+
     /**
      * @var Collection<int, Comment>
      */
@@ -72,20 +128,15 @@ class Post
     #[ORM\OrderBy(['publishedAt' => 'DESC'])]
     private Collection $comments;
 
-    /**
-     * @var Collection<int, Tag>
-     */
-    #[ORM\ManyToMany(targetEntity: Tag::class, cascade: ['persist'])]
-    #[ORM\JoinTable(name: 'symfony_demo_post_tag')]
-    #[ORM\OrderBy(['name' => 'ASC'])]
-    #[Assert\Count(max: 4, maxMessage: 'post.too_many_tags')]
-    private Collection $tags;
+    private string $imageForWeb;
+
+
 
     public function __construct()
     {
         $this->publishedAt = new \DateTime();
         $this->comments = new ArrayCollection();
-        $this->tags = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -102,6 +153,89 @@ class Post
     {
         $this->title = $title;
     }
+
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function setGender(string $gender): void
+    {
+        $this->gender = $gender;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setStreet(string $street): void
+    {
+        $this->street = $street;
+    }
+
+    public function getStreet(): ?string
+    {
+        return $this->street;
+    }
+
+    public function setCity(string $city): void
+    {
+        $this->city = $city;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setZip(string $zip): void
+    {
+        $this->zip = $zip;
+    }
+
+    public function getZip(): ?string
+    {
+        return $this->zip;
+    }
+
+    public function setCountry(string $country): void
+    {
+        $this->country = $country;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function setWidth(string $width): void
+    {
+        $this->width = $width;
+    }
+
+    public function getWidth(): ?int
+    {
+        return $this->width;
+    }
+
+
+    public function setWeight(string $weight): void
+    {
+        $this->weight = $weight;
+    }
+
+    public function getWeight(): ?int
+    {
+        return $this->weight;
+    }
+
 
     public function getSlug(): ?string
     {
@@ -164,35 +298,32 @@ class Post
         $this->comments->removeElement($comment);
     }
 
-    public function getSummary(): ?string
-    {
-        return $this->summary;
+
+    public function getPoints(){
+        return $this->points;
     }
 
-    public function setSummary(?string $summary): void
-    {
-        $this->summary = $summary;
+    public function increasePoints($poins){
+        $this->points = (int)$this->points + $poins;
     }
 
-    public function addTag(Tag ...$tags): void
-    {
-        foreach ($tags as $tag) {
-            if (!$this->tags->contains($tag)) {
-                $this->tags->add($tag);
-            }
+    public function setImage($image){
+        $this->image = $image;
+    }
+
+    public function getImage(){
+        return $this->image;
+    }
+
+    public function setImageForWeb(){
+        $this->imageForWeb = null;
+    }
+
+    public function getImageForWeb(){
+        $img = $this->getImage();
+        if(empty($img)){
+            $img = "empty-img.jpg";
         }
-    }
-
-    public function removeTag(Tag $tag): void
-    {
-        $this->tags->removeElement($tag);
-    }
-
-    /**
-     * @return Collection<int, Tag>
-     */
-    public function getTags(): Collection
-    {
-        return $this->tags;
+        return $img;
     }
 }

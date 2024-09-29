@@ -14,12 +14,13 @@
    TIP: With FOSHttpCache you can also adapt this to make it cache safe:
    https://foshttpcachebundle.readthedocs.io/en/latest/features/helpers/flash-message.html
 #}
-{% if app.request.hasPreviousSession %}
+
     <div class="messages">
+        {% if app.request.hasPreviousSession %}
         {% for type, messages in app.flashes %}
             {% for message in messages %}
                 {# Bootstrap alert, see https://getbootstrap.com/docs/3.4/components/#alerts #}
-                <div class="alert alert-dismissible alert-{{ type }} fade show" role="alert">
+                <div class="alert alert-dismissible alert-{{ type }}  fade show" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="{{ 'action.close'|trans }}">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -28,5 +29,6 @@
                 </div>
             {% endfor %}
         {% endfor %}
+        {% endif %}
     </div>
-{% endif %}
+

@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'homepage-new' %}
+    {% block main %}
+
+
+        <h1>{{ 'title.post_list'|trans }}</h1>
+
+        {{ include('default/_flash_messages.html.twig') }}
+        table-responsive
+        {% if posts  %}
+            table-middle-aligned table-borderless
+        <table class="table  table-responsive-sm table-borderless table-striped">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col" class="d-none d-lg-table-cell"></th>
+                    <th scope="col">{{ 'label.name'|trans }}</th>
+                    <th scope="col"></th>
+
+                    <th scope="col" class="text-center"><i class="fa fa-cogs" aria-hidden="true"></i> {{ 'label.actions'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% include 'post/_post_list.html.twig' with  {'type':'basic'} %}
+            </tbody>
+        </table>
+
+
+            {% if paginator.hasToPaginate %}
+                {% include 'default/_paginator.html.twig' with  {'target':'list_paginated'} %}
+            {% endif %}
+        {% endif %}
+
+{% endblock %}
+
+{% block sidebar %}
+    <div class="row">
+        <div class="col-md-12">
+            {% if  is_granted('IS_AUTHENTICATED_FULLY') %}
+                <a class="btn btn-lg btn-block btn-success" href="{{ path('new_post', {postSlug: 0}) }}">
+                    <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.add_post'|trans }}
+                </a>
+            {%else%}
+                <a class="btn btn-success" href="{{ path('security_login', {'redirect_to': app.request.pathInfo}) }}">{{ 'login.to_publish_a_comment'|trans }}</a>
+            {% endif %}
+        </div>
+    </div>
+    <br>
+    {{ parent() }}
+    {{ show_source_code(_self) }}
+{% endblock %}
+
+{% block footer %}{% endblock %}

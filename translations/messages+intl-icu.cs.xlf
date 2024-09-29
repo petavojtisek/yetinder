@@ -21,12 +21,17 @@
 
             <trans-unit id="title.homepage">
                 <source>title.homepage</source>
-                <target><![CDATA[Vítejte v <strong>Symfony Demo</strong> aplikaci]]></target>
+                <target><![CDATA[Vítejte na YetiBook  ]]></target>
             </trans-unit>
             <trans-unit id="title.source_code">
                 <source>title.source_code</source>
                 <target>Zdrojové kódy použité při vykreslení této stránky</target>
             </trans-unit>
+            <trans-unit id="post.list.btn">
+                 <source>post.list.btn</source>
+                 <target>Vstoupit</target>
+            </trans-unit>
+
             <trans-unit id="title.controller_code">
                 <source>title.controller_code</source>
                 <target>Kód kontroleru</target>
@@ -42,6 +47,14 @@
             <trans-unit id="title.post_list">
                 <source>title.post_list</source>
                 <target>Seznam příspěvků</target>
+            </trans-unit>
+            <trans-unit id="title.post_list.top">
+                <source>title.post_list.top</source>
+                <target>Seznam Top příspěvků</target>
+            </trans-unit>
+            <trans-unit id="action.add_post">
+                <source>action.add_post</source>
+                <target>Přidat Yetiho</target>
             </trans-unit>
             <trans-unit id="title.edit_post">
                 <source>title.edit_post</source>
@@ -187,10 +200,31 @@
                 <target>Odhlásit</target>
             </trans-unit>
 
-            <trans-unit id="post.to_publish_a_comment">
-                <source>post.to_publish_a_comment</source>
-                <target>se pro přidání komentáře</target>
+            <trans-unit id="login.to_publish_a_comment">
+                <source>login.to_publish_a_comment</source>
+                <target>Přihlašte se pro přidání komentáře</target>
             </trans-unit>
+            <trans-unit id="login.to_see_posts">
+                 <source>login.to_see_posts</source>
+                 <target>Přihlašte se pro Vaše návrhy</target>
+             </trans-unit>
+            <trans-unit id="item.content.detail">
+                 <source>item.content.detail</source>
+                 <target>Zobrazit popis</target>
+             </trans-unit>
+             <trans-unit id="title.stats_list">
+                 <source>title.stats_list</source>
+                 <target>Statistika</target>
+             </trans-unit>
+             <trans-unit id="menu.posts">
+                <source>menu.posts</source>
+                <target>Seznam</target>
+            </trans-unit>
+            <trans-unit id="menu.stats">
+                 <source>menu.stats</source>
+                 <target>Statistika</target>
+             </trans-unit>
+
             <trans-unit id="post.num_comments">
                 <source>post.num_comments</source>
                 <target>{count, plural, one {# komentář} few {# komentáře} other {# komentářů}}</target>
@@ -257,6 +291,82 @@
                 <source>paginator.next</source>
                 <target>Další</target>
             </trans-unit>
+            <trans-unit id="comment.already.voted">
+                <source>comment.already.voted</source>
+                <target>Již jste hlasoval</target>
+            </trans-unit>
+            <trans-unit id="comment.voted.success">
+                <source>comment.voted.success</source>
+                <target>Vaše hlasování proběhlo v pořádku</target>
+            </trans-unit>
+            <trans-unit id="nomore.posts">
+                <source>nomore.posts</source>
+                <target>aktualně  pro vás nemáme žádné nové příspěvky</target>
+            </trans-unit>
+            <trans-unit id="error.vote.author">
+                <source>error.vote.author</source>
+                <target>Nelze hlasovat pro vlastni post</target>
+            </trans-unit>
+            <trans-unit id="label.name">
+                 <source>label.name</source>
+                 <target>Jméno</target>
+            </trans-unit>
+            <trans-unit id="error.vote.multiple">
+                 <source>error.vote.multiple</source>
+                 <target>Již jste hlasoval</target>
+            </trans-unit>
+            <trans-unit id="error.need.login">
+                  <source>error.need.login</source>
+                  <target>Musíte být přihlášen</target>
+             </trans-unit>
+             <trans-unit id="label.gender">
+                <source>label.gender</source>
+                <target>Pohlaví</target>
+             </trans-unit>
+<trans-unit id="label.gender.choice">
+    <source>label.gender.choice</source>
+    <target>Vyberte pohlaví</target>
+</trans-unit>
+<trans-unit id="label.width">
+    <source>label.width</source>
+    <target>Výška</target>
+</trans-unit>
+<trans-unit id="label.weight">
+    <source>label.weight</source>
+    <target>Váha</target>
+</trans-unit>
+<trans-unit id="label.street">
+    <source>label.street</source>
+    <target>Ulice a čp</target>
+</trans-unit>
+<trans-unit id="label.city">
+    <source>label.city</source>
+    <target>Město</target>
+</trans-unit>
+<trans-unit id="label.zip">
+    <source>label.zip</source>
+    <target>PSČ</target>
+</trans-unit>
+<trans-unit id="label.country">
+    <source>label.country</source>
+    <target>Stát</target>
+</trans-unit>
+<trans-unit id="label.image">
+    <source>label.image</source>
+    <target>Foto</target>
+</trans-unit>
+<trans-unit id="error.vote.owner">
+   <source>error.vote.owner</source>
+   <target>Nelze hlasovat pro vlastní příspěvek</target>
+</trans-unit>
+
+
+
+
+
+
+
+
         </body>
     </file>
 </xliff>

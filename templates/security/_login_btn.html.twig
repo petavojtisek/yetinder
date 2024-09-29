@@ -1,0 +1,16 @@
+{% if  is_granted('IS_AUTHENTICATED_FULLY') %}
+
+        <a class="nav-link" href="{{ logout_path() }}">
+            <i class="fa fa-sign-out" aria-hidden="true"></i> {{ 'menu.logout'|trans }}
+        </a>
+
+{% else %}
+
+        <a class="nav-link" href="{{ path('security_login', {'redirect_to': app.request.pathInfo}) }}">
+            <i class="fa fa-sign-in" aria-hidden="true"></i> {{ 'action.sign_in'|trans }}
+        </a>
+
+{% endif %}
+
+
+

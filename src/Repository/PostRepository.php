@@ -13,47 +13,42 @@ namespace App\Repository;
 
 use App\Entity\Post;
 use App\Entity\Tag;
+use App\Facade\PostFacade;
 use App\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\AST\CoalesceExpression;
 use Doctrine\Persistence\ManagerRegistry;
 use function Symfony\Component\String\u;
 
 /**
- * This custom Doctrine repository contains some methods which are useful when
- * querying for blog post information.
- *
- * See https://symfony.com/doc/current/doctrine.html#querying-for-objects-the-repository
- *
- * @author Ryan Weaver <weaverryan@gmail.com>
- * @author Javier Eguiluz <javier.eguiluz@gmail.com>
- * @author Yonel Ceruto <yonelceruto@gmail.com>
- *
  * @method Post|null findOneByTitle(string $postTitle)
  *
  * @template-extends ServiceEntityRepository<Post>
  */
 class PostRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(ManagerRegistry $registry,    EntityManagerInterface $entityManager)
     {
+
         parent::__construct($registry, Post::class);
+        $this->entityManager = $entityManager;
     }
 
-    public function findLatest(int $page = 1, Tag $tag = null): Paginator
+
+    public function findLatest(int $page = 1): Paginator
     {
         $qb = $this->createQueryBuilder('p')
-            ->addSelect('a', 't')
+            ->addSelect('a')
             ->innerJoin('p.author', 'a')
-            ->leftJoin('p.tags', 't')
             ->where('p.publishedAt <= :now')
             ->orderBy('p.publishedAt', 'DESC')
             ->setParameter('now', new \DateTime())
         ;
-
-        if (null !== $tag) {
-            $qb->andWhere(':tag MEMBER OF p.tags')
-                ->setParameter('tag', $tag);
-        }
 
         return (new Paginator($qb))->paginate($page);
     }
@@ -88,6 +83,70 @@ class PostRepository extends ServiceEntityRepository
 
         return $result;
     }
+
+
+    /**
+     * @param $user
+     * @return false|mixed
+     */
+    public function getSurprisePost($user, $country){
+
+        $com = $this->entityManager->getRepository('App\Entity\Comment');
+        //nacteni jiz odhlasovanych postu
+        $sub = $com->createQueryBuilder('c')
+            ->select('c.id')
+            ->andWhere('c.post = p.id')
+            ->andWhere('c.author = :userId ');
+        $sub->setParameter('userId', $user?->getId());
+
+
+        //nacteni postu kde nejsem autor a zaroven jsem nehlasoval
+        $qb = $this->createQueryBuilder('p')
+                ->addSelect('CASE WHEN (p.country = :country) THEN 1 ELSE 0 END AS HIDDEN mainSort')
+                ->setMaxResults(1)
+                ->where('p.author != :userId')
+                ->setParameter('country', $country)
+                ->setParameter('userId', $user?->getId())
+                ->orderBy('mainSort DESC,  RAND()');
+
+        $qb->andWhere($qb->expr()->not($qb->expr()->exists($sub->getDQL())));
+        $res = $qb->getQuery()->getResult();
+
+        if($res and !empty($res)){
+            return $res[0];
+        }
+
+        return false;
+
+
+
+    }
+
+    public function addPoints($id, $points){
+
+      /*
+        $em = $this->getDoctrine()->getManager();
+        $em = $this->createQueryBuilder();
+        $query = $em->createQuery(
+            'UPDATE models\Post p
+             SET p.points = COALESCE(p.points,0)+:points'
+              WHERE p.id = :id
+        )->setParameter('points', $points);
+        ->setParameter('id', $id);
+        $query->execute();
+
+
+       /*
+        $q = $this->createQueryBuilder()
+            ->update('models\Post', 'p')
+            ->set('p.points', COALESCE(p.points,0)+:points' )
+            ->where('p.id = ?1')
+            ->setParameter(1, $points)
+            ->getQuery();
+         $q->execute();
+       */
+    }
+
 
     /**
      * Transforms the search string into an array of search terms.

@@ -1,0 +1,10 @@
+{% if posts  %}
+    {% for post in posts %}
+        {% include 'post/_post_item.html.twig' with  {'type':type} %}
+
+    {% else %}
+        <tr>
+            <td colspan="4" align="center">{{ 'post.no_posts_found'|trans }}</td>
+        </tr>
+    {% endfor %}
+{% endif %}

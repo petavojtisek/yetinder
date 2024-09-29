@@ -1,0 +1,163 @@
+{%if type == 'hp' %}
+    <tr>
+        <td>{{ post.name }}</td>
+        <td>{{ post.publishedAt|format_datetime('medium', 'short', '', 'UTC') }}</td>
+        <td>{{ post.points|default(0) }}</td>
+    </tr>
+{%elseif type == 'card'%}
+    <section>
+        <h2>Yetinder</h2>
+        <div class="image">
+            <img width="170" src="{{post.imageForWeb|imagePath('small')}}"/>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <i class="fa fa-person"></i>  {% if post.gender == 'M' %}  <i class="fa fa-male"></i> {% else %} <i class="fa fa-female"></i>{% endif %} {{ post.name }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {{ post.title }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <i class="fa fa-address-card"></i> {{ post.street }}  {{ post.city }}   {{ post.zip }} {{ post.country }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <i class="fa fa-star"></i> {{ post.points }}
+            </div>
+            <div class="col-md-6">
+                <i class="fa fa-calendar"></i> {{ post.publishedAt|format_datetime('medium', 'short', '', 'UTC') }}
+            </div>
+
+        </div>
+        <div class="row">
+
+            <div class="col-md-6">
+                <i class="fa fa-ruler"></i> {{ post.width }} cm
+            </div>
+            <div class="col-md-6">
+                <i class="fa fa-universal-access"></i> {{ post.weight }} Kg
+            </div>
+        </div>
+        <div class="row item-actions  pt-5 pb-3" >
+            <div class="col-md-12 col-xs-12">
+            {% for i in 0..4 %}
+
+                     <a class="ajax  btn-primary btn-sm " style="margin-left:2px; line-height:2.5 " href="{{ path('comment_new', {postSlug: post.slug, star:i+1, token: csrf_token('comment-item') }) }}" data-path="{{ path('comment_new_ajax', {postSlug: post.slug, star:i+1, token: csrf_token('comment-item')}) }}" >
+                        <i style="width: 18px" class="fa fa-star fa-lg" aria-hidden="true"></i>{{i+1}}
+                    </a>
+
+            {% endfor %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 pt-2">
+                <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#colapse_card_{{post.id}}" aria-expanded="false" aria-controls="colapse_card_{{post.id}}">
+                    {{ 'item.content.detail'|trans|raw}}
+                </button>
+            </div>
+            <div class="collapse" id="colapse_card_{{post.id}}">
+                <div class="card card-body">
+                    {{ post.content }}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script type="text/javascript">
+        $('.ajax').on("click", function (e){
+            e.preventDefault();
+            let path = $(this).data('path');
+
+            $.ajax({
+                url: path,
+                type: "GET",
+                dataType: 'json',
+                success: function (result) {
+                        $('.messages').html('');
+                        if(result.status=='success'){
+                            $('.messages').append(
+                                '<div class="alert alert-success alert-dismissable">'+
+                                '<button type="button" class="close" data-dismiss="alert">'+
+                                '<span aria-hidden="true">&times;</span>'+
+                                '<span class="sr-only">Close</span>'+
+                                '</button>'+
+                                    result.message+
+                                '</div>'
+                            );
+                        }else{
+                            $('.messages').append(
+                                '<div class="alert alert-danger alert-dismissable">'+
+                                '<button type="button" class="close" data-dismiss="alert">'+
+                                '<span aria-hidden="true">&times;</span>'+
+                                '<span class="sr-only">Close</span>'+
+                                '</button>'+
+                                result.message+
+                                '</div>'
+                            );
+                        }
+
+                        $('#surprise').html('');
+
+                        if(typeof result.post != "undefined"){
+                            $('#surprise').html(result.post);
+                        }else{
+                            let message ="<p>" + "{{ 'nomore.posts'|trans }}" + "</p>";
+                            $('#surprise').html(message);
+                        }
+
+                },
+                complete: load
+            });
+
+            return false;
+        });
+    </script>
+{%else%}
+<tr>
+    <td> <i class="fa fa-star"></i> {{ post.points }}</td>
+    <td class="d-none d-lg-table-cell"><img width="80" src="{{post.imageForWeb|imagePath('small')}}"/></td>
+    <td>
+        <i class="fa fa-person"></i>  {% if post.gender == 'M' %}  <i class="fa fa-male"></i> {% else %} <i class="fa fa-female"></i>{% endif %} {{ post.name }}
+    </td>
+    <td class="d-none d-lg-table-cell"> <i class="fa fa-calendar"></i> {{ post.publishedAt|format_datetime('medium', 'short', '', 'UTC') }}</td>
+    <td><a class="btn btn-secondary" data-toggle="collapse" data-target="#post_colaplse_{{ post.id }}" aria-expanded="false" aria-controls="#post_colaplse_{{ post.id }}">
+                {{'item.content.detail'|trans}}
+        </a>
+    </td>
+
+    <td class="text-right">
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            {% if voted[post.id] is defined %}
+                {{ 'error.vote.multiple'|trans }}
+            {% elseif   post.author.id == userId %}
+                {{ 'error.vote.owner'|trans }}
+            {% else %}
+                <div class="item-actions">
+                    {% for i in 0..4 %}
+                        <a href="{{ path('comment_new', {postSlug: post.slug, star:i+1, token: csrf_token('comment-item')}) }}" class="btn btn-sm btn-primary">
+                            <i class="fa fa-star fa-sm" aria-hidden="true"> {{i+1}}</i>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% else %}
+            {{ 'error.need.login'|trans }}
+
+        {% endif %}
+    </td>
+</tr>
+<tr>
+
+</tr>
+    <tr class="collapse" id="post_colaplse_{{ post.id }}">
+        <td colspan="6"> {% include 'post/_post_additional_data.html.twig' with  {'post':post} %}</td>
+    </tr>
+
+
+{% endif %}

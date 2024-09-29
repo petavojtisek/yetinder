@@ -27,7 +27,8 @@ use function Symfony\Component\String\u;
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
 #[ORM\Entity]
-#[ORM\Table(name: 'symfony_demo_comment')]
+#[ORM\Table(name: 'wjs_comment')]
+#[ORM\Index(columns: ['published_at'], name: 'published_at')]
 class Comment
 {
     #[ORM\Id]
@@ -39,10 +40,9 @@ class Comment
     #[ORM\JoinColumn(nullable: false)]
     private ?Post $post = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotBlank(message: 'comment.blank')]
-    #[Assert\Length(min: 5, minMessage: 'comment.too_short', max: 10000, maxMessage: 'comment.too_long')]
-    private ?string $content = null;
+    #[ORM\Column(type: Types::INTEGER)]
+    #[Assert\NotBlank(message: 'points.blank')]
+    private ?int $points = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private \DateTime $publishedAt;
@@ -50,6 +50,9 @@ class Comment
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $author = null;
+
+
+
 
     public function __construct()
     {
@@ -69,14 +72,14 @@ class Comment
         return $this->id;
     }
 
-    public function getContent(): ?string
+    public function getPoints(): ?int
     {
-        return $this->content;
+        return $this->points;
     }
 
-    public function setContent(string $content): void
+    public function setPoints(int $points): void
     {
-        $this->content = $content;
+        $this->points = $points;
     }
 
     public function getPublishedAt(): \DateTime

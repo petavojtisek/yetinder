@@ -66,6 +66,8 @@ final class RedirectToPreferredLocaleSubscriber implements EventSubscriberInterf
 
     public function onKernelRequest(RequestEvent $event): void
     {
+
+
         $request = $event->getRequest();
 
         // Ignore sub-requests and all URLs but the homepage
@@ -82,6 +84,7 @@ final class RedirectToPreferredLocaleSubscriber implements EventSubscriberInterf
         $preferredLanguage = $request->getPreferredLanguage($this->locales);
 
         if ($preferredLanguage !== $this->defaultLocale) {
+
             $response = new RedirectResponse($this->urlGenerator->generate('homepage', ['_locale' => $preferredLanguage]));
             $event->setResponse($response);
         }

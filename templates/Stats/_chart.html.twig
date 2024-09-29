@@ -1,0 +1,15 @@
+<h3>{{ key }} - top: {{topPositions}}</h3>
+<div>
+    <canvas id="myChart_{{index}}"></canvas>
+</div>
+<script>
+    let ctx_{{index}} = document.getElementById("myChart_{{index}}").getContext("2d");
+    let myChart_{{index}}  = new Chart(ctx_{{index}}, {
+        type: "bar",
+        responsive: false,
+        data: {
+            labels: {{chartData.labels|raw}},
+            datasets: {{chartData.dataSet|raw}}
+        },
+    });
+</script>

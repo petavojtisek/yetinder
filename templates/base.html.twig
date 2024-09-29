@@ -8,10 +8,8 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <title>{% block title %}Symfony Demo application{% endblock %}</title>
-        <link rel="alternate" type="application/rss+xml" title="{{ 'rss.title'|trans }}" href="{{ path('blog_rss') }}">
-
-        {#
+        <title>{% block title %}YetiBook{% endblock %}</title>
+         {#
             Those two blocks defines frontend entrypoint for CSS and JavaScript assets
             See https://symfony.com/doc/current/frontend.html
         #}
@@ -21,6 +19,14 @@
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
+        <script
+                src="https://code.jquery.com/jquery-3.7.1.min.js"
+                integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+                crossorigin="anonymous">
+
+        </script>
+        {# <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script> #}
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
@@ -32,9 +38,7 @@
             <header>
                 <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
                     <div class="container">
-                        <a class="navbar-brand" href="{{ path('homepage') }}">
-                            Symfony Demo
-                        </a>
+
                         <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#appNavbar" aria-controls="appNavbar" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                         </button>
@@ -42,42 +46,23 @@
                         <div class="navbar-collapse collapse" id="appNavbar">
                             <ul class="navbar-nav ml-auto">
                                 {% block header_navigation_links %}
-                                    <li class="nav-item{{ _route == 'blog_index' ? ' active' : '' }}">
-                                        <a class="nav-link" href="{{ path('blog_index') }}">
+                                    <li class="nav-item{{ _route == 'homepage' ? ' active' : '' }}">
+                                        <a class="nav-link" href="{{ path('homepage') }}">
                                             <i class="fa fa-home" aria-hidden="true"></i> {{ 'menu.homepage'|trans }}
                                         </a>
                                     </li>
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="{{ path('admin_post_index') }}">
-                                                <i class="fa fa-lock" aria-hidden="true"></i> {{ 'menu.admin'|trans }}
-                                            </a>
-                                        </li>
-                                    {% endif %}
+                                    <li class="nav-item{{ _route == 'list' ? ' active' : '' }}">
+                                        <a class="nav-link" href="{{ path('list') }}">
+                                            <i class="fa fa-book" aria-hidden="true"></i> {{ 'menu.posts'|trans }}
+                                        </a>
+                                    </li>
+                                    <li class="nav-item{{ _route == 'stats' ? ' active' : '' }}">
+                                        <a class="nav-link" href="{{ path('stats') }}">
+                                            <i class="fa fa-chart-bar" aria-hidden="true"></i> {{ 'menu.stats'|trans }}
+                                        </a>
+                                    </li>
                                 {% endblock %}
 
-                                <li class="nav-item{{ _route == 'blog_search' ? ' active' : '' }}">
-                                    <a class="nav-link" href="{{ path('blog_search') }}"> <i class="fa fa-search"></i> {{ 'menu.search'|trans }}</a>
-                                </li>
-
-                                {% if app.user %}
-                                    <li class="nav-item dropdown">
-                                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="user">
-                                            <i class="fa fa-user" aria-hidden="true"></i>
-                                            <span class="caret"></span>
-                                            <span class="sr-only">{{ app.user.fullname }}</span>
-                                        </a>
-                                        <div class="dropdown-menu user" role="menu" aria-labelledby="user">
-                                            <a class="dropdown-item" href="{{ path('user_edit') }}">
-                                                <i class="fa fa-edit" aria-hidden="true"></i> {{ 'menu.user'|trans }}
-                                            </a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="{{ logout_path() }}">
-                                                <i class="fa fa-sign-out" aria-hidden="true"></i> {{ 'menu.logout'|trans }}
-                                            </a>
-                                        </div>
-                                    </li>
-                                {% endif %}
 
                                 <li class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle" data-toggle="modal" data-target="#locale-selector-modal" role="button" id="locales">
@@ -85,6 +70,10 @@
                                         <span class="caret"></span>
                                         <span class="sr-only">{{ 'menu.choose_language'|trans }}</span>
                                     </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    {{ include('security/_login_btn.html.twig') }}
                                 </li>
                             </ul>
                         </div>
@@ -104,6 +93,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
+
 
                         <div class="modal-body">
                             <ul class="locales">
@@ -126,23 +116,22 @@
 
         <div class="container body-container">
             {% block body %}
-                <div class="row">
-                    <div id="main" class="col-sm-9">
-                        {{ include('default/_flash_messages.html.twig') }}
 
-                        {% block main %}{% endblock %}
+                    <div class="row">
+                        {%if layout is defined and layout == 'full'%}
+                            <div id="main" class="col-sm-12 col-md-12">
+                        {%else%}
+                            <div id="main" class="col-sm-9">
+                        {%endif%}
+                            {% block main %}{% endblock %}
+                        </div>
+
+                        <div id="sidebar" class="col-sm-3">
+                            {% block sidebar %}{% endblock %}
+                        </div>
+
                     </div>
 
-                    <div id="sidebar" class="col-sm-3">
-                        {% block sidebar %}
-                            {{ render_esi(controller('Symfony\\Bundle\\FrameworkBundle\\Controller\\TemplateController::templateAction', {
-                                'template': 'blog/about.html.twig',
-                                'sharedAge': 600,
-                                '_locale': app.request.locale
-                            })) }}
-                        {% endblock %}
-                    </div>
-                </div>
             {% endblock %}
         </div>
 

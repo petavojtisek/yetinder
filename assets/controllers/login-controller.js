@@ -26,6 +26,64 @@ export default class extends Controller {
     this.passwordTarget.value = 'kitten'
   }
 
+  prefillPetr() {
+    this.usernameTarget.value = 'petr'
+    this.passwordTarget.value = 'petrpetr'
+  }
+
+
+
+  prefillKatinaMccall() {
+    this.usernameTarget.value = 'Katina'
+    this.passwordTarget.value = 'MccallMccall'
+  }
+
+  prefillPhillipBeltran() {
+    this.usernameTarget.value = 'Phillip'
+    this.passwordTarget.value = 'BeltranBeltran'
+  }
+
+  prefillMillieStephenson() {
+    this.usernameTarget.value = 'Millie'
+    this.passwordTarget.value = 'StephensonStephenson'
+  }
+
+  prefillLennyKerr() {
+    this.usernameTarget.value = 'Lenny'
+    this.passwordTarget.value = 'KerrKerrKerr'
+  }
+
+
+  prefillEdisonLyons() {
+    this.usernameTarget.value = 'Edison'
+    this.passwordTarget.value = 'LyonsLyons'
+  }
+
+  prefillCathrynBenitez() {
+    this.usernameTarget.value = 'Cathryn'
+    this.passwordTarget.value = 'BenitezBenitez'
+  }
+
+  prefillLadonnaMorrison() {
+    this.usernameTarget.value = 'Ladonna'
+    this.passwordTarget.value = 'MorrisonMorrison'
+  }
+
+  prefillJulianneMerritt() {
+    this.usernameTarget.value = 'Julianne'
+    this.passwordTarget.value = 'MerrittMerritt'
+  }
+
+  prefillOswaldoLowe() {
+    this.usernameTarget.value = 'Oswaldo'
+    this.passwordTarget.value = 'LoweLowe'
+  }
+
+  prefillJosefRandall() {
+    this.usernameTarget.value = 'Josef'
+    this.passwordTarget.value = 'RandallRandall'
+  }
+
   togglePasswordInputType() {
     if ('password' === this.passwordTarget.type) {
       this.passwordTarget.type = 'text'
